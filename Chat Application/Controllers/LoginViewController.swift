@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Firebase
 
 class LoginViewController: UIViewController {
 
@@ -26,6 +27,7 @@ class LoginViewController: UIViewController {
         button.backgroundColor = UIColor(r: 80, g: 101, b: 161)
         button.setTitleColor(.white, for: .normal)
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 16)
+        button.addTarget(self, action: #selector(handleRegister), for: .touchUpInside)
         return button
     }()
     
@@ -81,6 +83,54 @@ class LoginViewController: UIViewController {
         setupPasswordTextFieldView()
         setupProfileImageView()
         
+    }
+    
+    @objc func handleRegister() {
+        
+        guard let email = emailTextField.text, let password = passwordTextField.text, let name = nameTextField.text else {
+            print("form is not valid")
+            return
+        }
+
+        Auth.auth().createUser(withEmail: email, password: password) { (authResult, error) in
+            
+            if error != nil {
+                print(error!)
+                return
+            }
+            
+            guard let uid = authResult?.user.uid else { return }
+            
+            var ref: DatabaseReference!
+            ref = Database.database().reference(fromURL: "https://letsconnect-ad375.firebaseio.com/")
+            let usersReference = ref.child("users").child(uid)
+            
+            let values = ["name":name, "email":email]
+
+            usersReference.updateChildValues(values, withCompletionBlock: { (err, ref) in
+
+                if err != nil {
+                    print(err!)
+                    return
+                }
+
+                print("successfully saved the user into Firebase db")
+
+            })
+            
+//            guard let user = authResult?.user else { return }
+            
+//            ref.child("users").child(user.uid).setValue(["name": name, "email": email]) {
+//                (error:Error?, ref:DatabaseReference) in
+//                if let error = error {
+//                    print("Data could not be saved: \(error).")
+//                } else {
+//                    print("Data saved successfully!")
+//                }
+//            }
+
+        }
+
     }
     
     fileprivate func setupProfileImageView() {
