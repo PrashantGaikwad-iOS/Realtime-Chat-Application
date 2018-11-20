@@ -56,9 +56,9 @@ class LoginViewController: UIViewController, UIGestureRecognizerDelegate {
     lazy var profileImageView:UIImageView = {
        let img = UIImageView()
         img.translatesAutoresizingMaskIntoConstraints = false
-        img.image = UIImage(named: "apple")
+        img.image = UIImage(named: "chat")
         img.contentMode = .scaleAspectFill
-        img.backgroundColor = .black
+        img.backgroundColor = .clear
         img.isUserInteractionEnabled = true
         
         let tap = UITapGestureRecognizer(target: self, action: #selector(handleSelectProfileImageView))
