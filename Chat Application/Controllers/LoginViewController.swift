@@ -9,7 +9,7 @@
 import UIKit
 import Firebase
 
-class LoginViewController: UIViewController {
+class LoginViewController: UIViewController, UIGestureRecognizerDelegate {
 
     let inputsContainerView:UIView = {
         let view = UIView()
@@ -53,15 +53,20 @@ class LoginViewController: UIViewController {
         return nm
     }()
     
-    let profileImageView:UIImageView = {
+    lazy var profileImageView:UIImageView = {
        let img = UIImageView()
         img.translatesAutoresizingMaskIntoConstraints = false
-        img.image = UIImage(named: "Prashant")
+        img.image = UIImage(named: "apple")
         img.contentMode = .scaleAspectFill
+        img.backgroundColor = .black
+        img.isUserInteractionEnabled = true
+        
+        let tap = UITapGestureRecognizer(target: self, action: #selector(handleSelectProfileImageView))
+        img.addGestureRecognizer(tap)
         return img
     }()
     
-    let loginRegisterSegmetedControl:UISegmentedControl = {
+    lazy var loginRegisterSegmetedControl:UISegmentedControl = {
        let sc = UISegmentedControl(items: ["Login","Register"])
         sc.translatesAutoresizingMaskIntoConstraints = false
         sc.tintColor = .white
@@ -69,6 +74,9 @@ class LoginViewController: UIViewController {
         sc.addTarget(self, action: #selector(handleLoginRegisterChange), for: .valueChanged)
         return sc
     }()
+    
+    
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -154,54 +162,6 @@ class LoginViewController: UIViewController {
             // Successfully logged in
             self.dismiss(animated: true, completion: nil)
         }
-    }
-    
-    @objc func handleRegister() {
-        
-        guard let email = emailTextField.text, let password = passwordTextField.text, let name = nameTextField.text else {
-            print("form is not valid")
-            return
-        }
-
-        Auth.auth().createUser(withEmail: email, password: password) { (authResult, error) in
-            
-            if error != nil {
-                print(error!)
-                return
-            }
-            
-            guard let uid = authResult?.user.uid else { return }
-            
-            var ref: DatabaseReference!
-            ref = Database.database().reference(fromURL: "https://letsconnect-ad375.firebaseio.com/")
-            let usersReference = ref.child("users").child(uid)
-            
-            let values = ["name":name, "email":email]
-
-            usersReference.updateChildValues(values, withCompletionBlock: { (err, ref) in
-
-                if err != nil {
-                    print(err!)
-                    return
-                }
-
-                print("successfully saved the user into Firebase db")
-                self.dismiss(animated: true, completion: nil)
-            })
-            
-//            guard let user = authResult?.user else { return }
-            
-//            ref.child("users").child(user.uid).setValue(["name": name, "email": email]) {
-//                (error:Error?, ref:DatabaseReference) in
-//                if let error = error {
-//                    print("Data could not be saved: \(error).")
-//                } else {
-//                    print("Data saved successfully!")
-//                }
-//            }
-
-        }
-
     }
     
     fileprivate func setupProfileImageView() {
