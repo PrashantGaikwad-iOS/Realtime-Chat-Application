@@ -91,7 +91,7 @@ class UserCell: UITableViewCell {
     
     let profileImageView: UIImageView = {
         let imgView = UIImageView()
-        imgView.image = UIImage(named: "Prashant")
+        imgView.image = UIImage(named: "apple")
         imgView.translatesAutoresizingMaskIntoConstraints = false
         imgView.layer.cornerRadius = 24
         imgView.layer.masksToBounds = true

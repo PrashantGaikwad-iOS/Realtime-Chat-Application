@@ -31,8 +31,11 @@ extension LoginViewController: UIImagePickerControllerDelegate, UINavigationCont
                 return
             }
             let imageName = NSUUID().uuidString
-            let storageRef = Storage.storage().reference().child("profileImages/\(imageName).png")
-            if let uploadData = self.profileImageView.image!.pngData() {
+            let storageRef = Storage.storage().reference().child("profileImages/\(imageName).jpg")
+            
+            if let profileImage = self.profileImageView.image, let uploadData = profileImage.jpegData(compressionQuality: 0.1) {
+            
+            // if let uploadData = self.profileImageView.image!.jpegData(compressionQuality: 0.1)) {
                 storageRef.putData(uploadData, metadata: nil) { (metaData, error) in
                     
                     guard let metadata = metaData else {
@@ -70,6 +73,12 @@ extension LoginViewController: UIImagePickerControllerDelegate, UINavigationCont
                 return
             }
             
+            // self.messagesVC.fetchUserAndSetNavBarTitle()
+            // self.messagesVC.navigationItem.title = values["name"] as? String
+            let user = User()
+            user.name = (values["name"] as! String)
+            user.profileImageUrl = (values["profileImageUrl"] as! String)
+            self.messagesVC.setupNavBarWithWithUser(user: user)
             print("successfully saved the user into Firebase db")
             self.dismiss(animated: true, completion: nil)
         })
@@ -101,7 +110,7 @@ extension LoginViewController: UIImagePickerControllerDelegate, UINavigationCont
     }
     
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-        print("cenceled picker")
+        print("canceled picker")
         self.dismiss(animated: true, completion: nil)
     }
 }

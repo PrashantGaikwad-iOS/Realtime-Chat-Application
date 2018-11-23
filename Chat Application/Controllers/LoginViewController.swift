@@ -11,6 +11,8 @@ import Firebase
 
 class LoginViewController: UIViewController, UIGestureRecognizerDelegate {
 
+    var messagesVC = MessagesController()
+    
     let inputsContainerView:UIView = {
         let view = UIView()
         view.backgroundColor = .white
@@ -146,20 +148,17 @@ class LoginViewController: UIViewController, UIGestureRecognizerDelegate {
     }
     
     func handleLogin() {
-        
         guard let email = emailTextField.text, let password = passwordTextField.text else {
             print("form is not valid")
             return
         }
-        
         Auth.auth().signIn(withEmail: email, password: password) { (authResult, error) in
-            
             if error != nil {
                 print(error!)
                 return
             }
-            
             // Successfully logged in
+            self.messagesVC.fetchUserAndSetNavBarTitle()
             self.dismiss(animated: true, completion: nil)
         }
     }
@@ -170,8 +169,6 @@ class LoginViewController: UIViewController, UIGestureRecognizerDelegate {
         profileImageView.widthAnchor.constraint(equalToConstant: 150).isActive = true
         profileImageView.heightAnchor.constraint(equalToConstant: 150).isActive = true
     }
-    
-    
     
     fileprivate func setupNameTextFieldView() {
         nameTextField.topAnchor.constraint(equalTo: inputsContainerView.topAnchor).isActive = true
@@ -216,7 +213,6 @@ class LoginViewController: UIViewController, UIGestureRecognizerDelegate {
         inputsContainerView.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -24).isActive = true
         inputContainerViewHeightAnchor = inputsContainerView.heightAnchor.constraint(equalToConstant: 150)
         inputContainerViewHeightAnchor?.isActive = true
-        
     }
     
     func preferredStatusBarStyle() -> UIStatusBarStyle {
@@ -226,7 +222,6 @@ class LoginViewController: UIViewController, UIGestureRecognizerDelegate {
 
 
 extension UIColor {
-    
     convenience init(r:CGFloat, g:CGFloat, b:CGFloat) {
         self.init(red:r/255, green:g/255, blue:b/255, alpha: 1)
     }
